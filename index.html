@@ -3,16 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <p>Current Timestamp: <span id="clock"></span></p>
 
-<script>
-  // Display the current localized date and time string
-  document.getElementById("clock").innerHTML = new Date().toLocaleString();
-  
-  // Or to get a Unix epoch timestamp in milliseconds:
-  // let unixTimestamp = Date.now(); 
-</script>
+    <script>
+        // ตั้งเวลาเริ่มต้น 5 นาที
+        let totalSeconds = 5 * 60; 
 
+        const timerDisplay = document.getElementById('timer');
+
+        function startTimer() {
+            const interval = setInterval(() => {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+
+                // แสดงผลในรูปแบบ mm:ss
+                timerDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (totalSeconds <= 0) {
+                    clearInterval(interval);
+                    timerDisplay.innerHTML = "หมดเวลา!";
+                    timerDisplay.style.color = "#2ed573";
+                } else {
+                    totalSeconds--;
+                }
+            }, 1000);
+        }
+
+        // เริ่มจับเวลาทันทีที่โหลดหน้าเว็บ
+        startTimer();
+    </script>
     <title>เกมจับคู่ภาพเหมือนอุปกรณ์ไอที</title>
     <style>
         .container {
