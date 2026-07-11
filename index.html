@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมจับคู่ภาพเหมือนอุปกรณ์ไอที</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .stats {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 15px;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card.flipped {
+            background-color: #fff;
+            transform: rotateY(180deg);
+        }
+        .card .front {
+            display: none;
+        }
+        .card.flipped .front {
+            display: block;
+            transform: rotateY(180deg);
+        }
+        .card.flipped .back {
+            display: none;
+        }
+        .card.matched {
+            background-color: #2ecc71;
+            cursor: default;
+        }
+        button {
+            margin-top: 25px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>เกมจับคู่รูปภาพ</h1>
+    <div class="stats">คู่ที่จับได้: <span id="score">0</span> / 8</div>
+    
+    <div class="grid" id="gameGrid"></div>
+    
+    <button onclick="startGame()">เริ่มเกมใหม่</button>
+
+    <script>
+        const cardArray = [
+            { name: 'TV', img: '📺'  },
+            { name: 'TV', img: '📺' },
+            { name: 'MOUSE', img: '🖱' },
+            { name: 'MOUSE', img: '🖱' },
+            { name: 'KEYBOARD', img: '⌨️' },
+            { name: 'KEYBOARD', img: '⌨️' },
+            { name: 'MONITOR', img: '🖥' },
+            { name: 'MONITOR', img: '🖥' },
+            { name: 'NOTEBOOK', img: '💻' },
+            { name: 'NOTEBOOK', img: '💻' },
+            { name: 'หูฟัง', img: '🎧' },
+            { name: 'หูฟัง', img: '🎧' },
+            { name: 'PRINTER', img: '🖨' },
+            { name: 'PRINTER', img: '🖨' },
+            { name: 'TELEPHONE', img: '☎️' },
+            { name: 'TELEPHONE', img: '☎️' }
+        ];
+
+        let grid = document.getElementById('gameGrid');
+        let scoreDisplay = document.getElementById('score');
+        let cardsChosen = [];
+        let cardsChosenId = [];
+        let cardsWon = [];
+        let score = 0;
+
+        function shuffle(array) {
+            array.sort(() => Math.random() - 0.5);
+        }
+
+        function startGame() {
+            shuffle(cardArray);
+            grid.innerHTML = '';
+            cardsChosen = [];
+            cardsChosenId = [];
+            cardsWon = [];
+            score = 0;
+            scoreDisplay.textContent = score;
+
+            for (let i = 0; i < cardArray.length; i++) {
+                let card = document.createElement('div');
+                card.setAttribute('class', 'card');
+                card.setAttribute('data-id', i);
+                card.addEventListener('click', flipCard);
+
+                let back = document.createElement('div');
+                back.setAttribute('class', 'back');
+                back.textContent = '❓';
+
+                let front = document.createElement('div');
+                front.setAttribute('class', 'front');
+                front.textContent = cardArray[i].img;
+
+                card.appendChild(front);
+                card.appendChild(back);
+                grid.appendChild(card);
+            }
+        }
+
+        function flipCard() {
+            let cardId = this.getAttribute('data-id');
+            
+            // ป้องกันการคลิกการ์ดใบเดิมซ้ำ หรือการ์ดที่เปิด/จับคู่ไปแล้ว
+            if (cardsChosenId.length < 2 && !this.classList.contains('flipped') && !this.classList.contains('matched')) {
+                this.classList.add('flipped');
+                cardsChosen.push(cardArray[cardId].name);
+                cardsChosenId.push(cardId);
+
+                if (cardsChosen.length === 2) {
+                    setTimeout(checkForMatch, 500);
+                }
+            }
+        }
+
+        function checkForMatch() {
+            let cards = document.querySelectorAll('.card');
+            const optionOneId = cardsChosenId[0];
+            const optionTwoId = cardsChosenId[1];
+
+            if (optionOneId !== optionTwoId && cardsChosen[0] === cardsChosen[1]) {
+                cards[optionOneId].classList.add('matched');
+                cards[optionTwoId].classList.add('matched');
+                cardsWon.push(cardsChosen);
+                score += 1;
+                scoreDisplay.textContent = score;
+            } else {
+                cards[optionOneId].classList.remove('flipped');
+                cards[optionTwoId].classList.remove('flipped');
+            }
+
+            cardsChosen = [];
+            cardsChosenId = [];
+
+            if (cardsWon.length === cardArray.length / 2) {
+                alert('ยินดีด้วย! คุณชนะแล้ว 🎉');
+            }
+        }
+
+        // เริ่มเกมทันทีเมื่อโหลดหน้าเว็บ
+        startGame();
+    </script>
+</body>
+</html>
