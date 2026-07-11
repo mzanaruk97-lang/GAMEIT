@@ -3,34 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script>
-        // ตั้งเวลาเริ่มต้น 5 นาที
-        let totalSeconds = 5 * 60; 
-
-        const timerDisplay = document.getElementById('timer');
-
-        function startTimer() {
-            const interval = setInterval(() => {
-                const minutes = Math.floor(totalSeconds / 60);
-                const seconds = totalSeconds % 60;
-
-                // แสดงผลในรูปแบบ mm:ss
-                timerDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                if (totalSeconds <= 0) {
-                    clearInterval(interval);
-                    timerDisplay.innerHTML = "หมดเวลา!";
-                    timerDisplay.style.color = "#2ed573";
-                } else {
-                    totalSeconds--;
-                }
-            }, 1000);
+     <title>ตัวจับเวลา 5 นาที</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        // เริ่มจับเวลาทันทีที่โหลดหน้าเว็บ
-        startTimer();
-    </script>
+        .timer-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #timer {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #ff4757;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
     <title>เกมจับคู่ภาพเหมือนอุปกรณ์ไอที</title>
     <style>
         .container {
@@ -117,7 +119,33 @@ img {
     </style>
 </head>
 <body>
+    <script>
+        // ตั้งเวลาเริ่มต้น 5 นาที
+        let totalSeconds = 5 * 60; 
 
+        const timerDisplay = document.getElementById('timer');
+
+        function startTimer() {
+            const interval = setInterval(() => {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+
+                // แสดงผลในรูปแบบ mm:ss
+                timerDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (totalSeconds <= 0) {
+                    clearInterval(interval);
+                    timerDisplay.innerHTML = "หมดเวลา!";
+                    timerDisplay.style.color = "#2ed573";
+                } else {
+                    totalSeconds--;
+                }
+            }, 1000);
+        }
+
+        // เริ่มจับเวลาทันทีที่โหลดหน้าเว็บ
+        startTimer();
+    </script>
     <h1>เกมจับคู่รูปภาพ</h1>
     <div class="stats">คู่ที่จับได้: <span id="score">0</span> / 8</div>
     
